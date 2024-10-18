@@ -11,8 +11,8 @@ public class ScheduleService {
 
         @Autowired
         private SearchService searchService;
-        @Scheduled(fixedDelay = 7000L)  // Runs daily at midnight
-        public void scheduleDailySearch() {
-            searchService.performDailySearch();
-        }
+//        @Scheduled(fixedDelay = 7000L)  // Runs daily at midnight
+//        public void scheduleDailySearch() {
+//            searchService.performDailySearch();
+//        }
 }

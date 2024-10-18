@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Table with Month and Year Selection</title>
+    <style>
+
+        /* The Modal (background) */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.8); /* Black with opacity */
+        }
+
+        /* Modal Content (Image) */
+        .modal-content {
+            margin: auto;
+            display: block;
+            width: 80%;
+            max-width: 700px;
+        }
+
+        /* Close Button */
+        .close {
+            position: absolute;
+            top: 20px;
+            right: 35px;
+            color: #f1f1f1;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* Add Animation */
+        .modal-content {
+            animation-name: zoom;
+            animation-duration: 0.6s;
+        }
+
+        @keyframes zoom {
+            from {
+                transform: scale(0)
+            }
+            to {
+                transform: scale(1)
+            }
+        }
+
+        /* 100% Width of the modal (when screen is less than 700px wide) */
+        @media only screen and (max-width: 700px) {
+            .modal-content {
+                width: 100%;
+            }
+        }
+
+        /* Global Styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7f9;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        /* Controls for month and year selection */
+        .controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+            gap: 10px;
+        }
+
+        .controls label {
+            font-size: 14px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .controls select {
+            padding: 8px;
+            font-size: 14px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #fff;
+            color: #333;
+            outline: none;
+        }
+
+        .controls button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            font-size: 14px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .controls button:hover {
+            background-color: #45a049;
+        }
+
+        /* Table Styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #fff;
+            border: 1px solid #ccc; /* Clearer border */
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            font-size: 14px; /* Set font size to 14px */
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #ddd;
+            color: #555;
+            width: 15.5%; /* Set each column to take 1/8 of the screen (100%/8 = 12.5%) */
+        }
+
+        th {
+            background-color: #52b1a1;
+            color: #ffffff;
+            font-weight: bold;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        /* Responsive: Ensure it adjusts well on smaller screens */
+        @media (max-width: 768px) {
+            table {
+                font-size: 14px;
+            }
+
+            th, td {
+                padding: 6px;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+<div id="imageModal" class="modal">
+    <span class="close">&times;</span>
+    <img class="modal-content" id="modalImage">
+</div>
+
+<h1>Data Table with Month and Year Selection</h1>
+
+<div class="controls">
+    <label for="monthSelect">Select Month:</label>
+    <select id="monthSelect">
+        <option value="0">January</option>
+        <option value="1">February</option>
+        <option value="2">March</option>
+        <option value="3">April</option>
+        <option value="4">May</option>
+        <option value="5">June</option>
+        <option value="6">July</option>
+        <option value="7">August</option>
+        <option value="8">September</option>
+        <option value="9">October</option>
+        <option value="10">November</option>
+        <option value="11">December</option>
+    </select>
+
+    <label for="yearSelect">Select Year:</label>
+    <select id="yearSelect"></select>
+
+    <button id="prevMonth">Previous Month</button>
+    <button id="nextMonth">Next Month</button>
+</div>
+
+<table id="data-table">
+    <thead>
+    <tr>
+        <th>Từ khóa đầu vào</th>
+        <th>Tu khoa the hien</th>
+        <th>Nền tảng</th>
+        <th>Ket qua tìm kiếm</th>
+        <th>1</th>
+        <th>2</th>
+        <th>3</th>
+        <th>4</th>
+        <th>5</th>
+        <th>6</th>
+        <th>7</th>
+        <th>8</th>
+        <th>9</th>
+        <th>10</th>
+        <th>11</th>
+        <th>12</th>
+        <th>13</th>
+        <th>14</th>
+        <th>15</th>
+        <th>16</th>
+        <th>17</th>
+        <th>18</th>
+        <th>19</th>
+        <th>20</th>
+        <th>21</th>
+        <th>22</th>
+        <th>23</th>
+        <th>24</th>
+        <th>25</th>
+        <th>26</th>
+        <th>27</th>
+        <th>28</th>
+        <th>29</th>
+        <th>30</th>
+        <th>31</th>
+    </tr>
+    </thead>
+    <tbody id="table-body">
+    <!-- Data rows will be populated here -->
+    </tbody>
+</table>
+
+<script>
+    const monthSelect = document.getElementById('monthSelect');
+    const yearSelect = document.getElementById('yearSelect');
+    const prevMonthBtn = document.getElementById('prevMonth');
+    const nextMonthBtn = document.getElementById('nextMonth');
+    const tableBody = document.getElementById('table-body');
+
+    let currentMonth = new Date().getMonth();
+    let currentYear = new Date().getFullYear();
+
+    // Populate year select with a range of years
+    function populateYears() {
+        for (let i = 2000; i <= 2030; i++) {  // Change this range as needed
+            let option = document.createElement('option');
+            option.value = i;
+            option.text = i;
+            if (i === currentYear) {
+                option.selected = true;
+            }
+            yearSelect.appendChild(option);
+        }
+    }
+
+    // Initialize year select
+    populateYears();
+
+    // Function to call the API and fetch data based on month and year
+    async function fetchData(month, year) {
+        const apiUrl = `http://localhost:8080/api/get_crawled_data?month=${parseInt(month) + 1}&year=${year}`;
+
+        try {
+            const response = await fetch(apiUrl);
+            if (!response.ok) {
+                throw new Error('Failed to fetch data from API');
+            }
+            const data = await response.json();
+            populateTable(data); // Populate table with the fetched data
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error fetching data. Please try again later.');
+        }
+    }
+
+    function populateTable(data) {
+        // Clear the current table rows
+        tableBody.innerHTML = '';
+
+        // Loop through each keyword group
+        data.forEach(item => {
+
+            const tableRow = document.createElement('tr');
+
+            // Add cells for "Từ khóa đầu vào", "Nền tảng", "Mẫu khớp"
+            tableRow.innerHTML = `
+            <td>${item.keyWord}</td>
+        `;
+
+            const displayKeyWords = document.createElement('td')
+
+            for(let index in item.displayKeyWords){
+                const displayKeyWord = document.createElement('p')
+                displayKeyWord.textContent = item.displayKeyWords[index]
+                displayKeyWords.appendChild(displayKeyWord)
+            }
+
+            const foudation = document.createElement('td')
+            foudation.textContent = item.foudation
+            const type = document.createElement('td')
+            type.textContent = 'mot phan'
+            tableRow.appendChild(displayKeyWords)
+            tableRow.appendChild(foudation)
+            tableRow.appendChild(type)
+            // Loop through each record for the current keyword
+            item.records.forEach(record => {
+
+                const dayData = record.suggestions;
+                const cell = document.createElement('td');
+
+                // Create a button instead of directly showing the image
+                const imgButton = document.createElement('button');
+                imgButton.textContent = "View Image";
+                imgButton.addEventListener('click', () => {
+                    showImagePopup(record.imgPath);
+                });
+
+                cell.appendChild(imgButton);
+
+                // Add suggestions data
+                for (let suggestion in dayData) {
+                    const suggestionDiv = document.createElement("p");
+                    suggestionDiv.textContent = dayData[suggestion];
+                    cell.appendChild(suggestionDiv);
+                }
+
+                tableRow.appendChild(cell);
+            });
+
+            // Append the row to the table body
+            tableBody.appendChild(tableRow);
+        });
+    }
+
+    // Function to display the image in a modal popup
+    function showImagePopup(imgPath) {
+        const modal = document.getElementById('imageModal');
+        const modalImage = document.getElementById('modalImage');
+
+        modal.style.display = "block";  // Show the modal
+        modalImage.src = imgPath;  // Set the image source
+    }
+
+    // Close the modal when the user clicks on the close button
+    document.querySelector('.close').addEventListener('click', function () {
+        document.getElementById('imageModal').style.display = "none";
+    });
+
+    // Close the modal if the user clicks anywhere outside of the image
+    window.onclick = function (event) {
+        const modal = document.getElementById('imageModal');
+        if (event.target === modal) {
+            modal.style.display = "none";
+        }
+    }
+
+    // Update table based on the selected month and year
+    function updateTable() {
+        const selectedMonth = monthSelect.value;
+        const selectedYear = yearSelect.value;
+        fetchData(selectedMonth, selectedYear); // Call the API with the selected month and year
+    }
+
+    // Handle previous month navigation
+    prevMonthBtn.addEventListener('click', function () {
+        if (currentMonth === 0) {
+            currentMonth = 11;
+            currentYear--;
+        } else {
+            currentMonth--;
+        }
+        monthSelect.value = currentMonth;
+        yearSelect.value = currentYear;
+        updateTable();
+    });
+
+    // Handle next month navigation
+    nextMonthBtn.addEventListener('click', function () {
+        if (currentMonth === 11) {
+            currentMonth = 0;
+            currentYear++;
+        } else {
+            currentMonth++;
+        }
+        monthSelect.value = currentMonth;
+        yearSelect.value = currentYear;
+        updateTable();
+    });
+
+    // Add event listeners for manual month and year selection
+    monthSelect.addEventListener('change', updateTable);
+    yearSelect.addEventListener('change', updateTable);
+
+    // Initial load
+    monthSelect.value = currentMonth;
+    updateTable();
+</script>
+
+</body>
+</html>

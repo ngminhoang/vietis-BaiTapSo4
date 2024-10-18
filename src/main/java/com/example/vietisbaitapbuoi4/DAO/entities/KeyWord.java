@@ -1,5 +1,6 @@
 package com.example.vietisbaitapbuoi4.DAO.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,6 +20,10 @@ public class KeyWord {
 
     private String name;
 
+    @ElementCollection
+    private List<String> displayKeyWords;
+
     @OneToMany(mappedBy = "keyWord", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<SearchRecord> records;
 }

@@ -1,6 +1,8 @@
 package com.example.vietisbaitapbuoi4.DAO.entities;
 
 import com.example.vietisbaitapbuoi4.DAO.entities.enums.FOUDATION;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -31,5 +33,6 @@ public class SearchRecord {  // Renamed from Record to SearchRecord
 
     @ManyToOne
     @JoinColumn(name = "keyword_id")
+
     private KeyWord keyWord;
 }
