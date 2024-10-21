@@ -1,22 +1,33 @@
 package com.example.vietisbaitapbuoi4.DAO.entities.DTOs;
 
+import com.example.vietisbaitapbuoi4.DAO.entities.KeyWord;
+import com.example.vietisbaitapbuoi4.DAO.entities.SearchRecord;
+
 import java.util.List;
 
 public class KeyWordResponseDTO {
 
     private Long id;
     private String name;
-    private String imgPath;
     private List<RecordResponseDTO> records;
-
     // Constructors
     public KeyWordResponseDTO() {}
 
-    public KeyWordResponseDTO(Long id, String name, String imgPath, List<RecordResponseDTO> records) {
+    public KeyWordResponseDTO(Long id, String name, List<RecordResponseDTO> records) {
         this.id = id;
         this.name = name;
-        this.imgPath = imgPath;
         this.records = records;
+    }
+
+
+
+    public KeyWordResponseDTO(KeyWord keyWord) {
+        this.id = keyWord.getId();
+        this.name = keyWord.getName();
+        try{
+            this.records = keyWord.getRecords().stream().map(RecordResponseDTO::new).toList();
+        }
+        catch(Exception e){}
     }
 
     // Getters and Setters
@@ -34,21 +45,5 @@ public class KeyWordResponseDTO {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getImgPath() {
-        return imgPath;
-    }
-
-    public void setImgPath(String imgPath) {
-        this.imgPath = imgPath;
-    }
-
-    public List<RecordResponseDTO> getRecords() {
-        return records;
-    }
-
-    public void setRecords(List<RecordResponseDTO> records) {
-        this.records = records;
     }
 }

@@ -3,6 +3,7 @@ package com.example.vietisbaitapbuoi4.services;
 import com.example.vietisbaitapbuoi4.DAO.entities.DTOs.KeyWordAndRecordResponseDTO;
 import com.example.vietisbaitapbuoi4.DAO.entities.KeyWord;
 import com.example.vietisbaitapbuoi4.DAO.entities.SearchRecord;
+import com.example.vietisbaitapbuoi4.DAO.entities.enums.ACCURATE_TYPE;
 import com.example.vietisbaitapbuoi4.DAO.entities.enums.FOUDATION;
 import com.example.vietisbaitapbuoi4.DAO.repositories.KeyWordRepository;
 import com.example.vietisbaitapbuoi4.DAO.repositories.RecordRepository;
@@ -47,9 +48,34 @@ public class RecordService {
                 List<SearchRecord> recordsForFoundation = foundationEntry.getValue().stream()
                         .sorted(Comparator.comparing(SearchRecord::getSearchDate)) // Sort by searchDate
                         .collect(Collectors.toList());
+                List<String> displayKeyWords = recordsForFoundation.get(0).getKeyWord().getDisplayKeyWords();
+                ACCURATE_TYPE accurateType = recordsForFoundation.get(0).getKeyWord().getAccurate_type();
+
+                //detect the type
+
+                for (SearchRecord record : recordsForFoundation) {
+                    for (String displayKeyWord : displayKeyWords) {
+                        String checkKeyWord = keyWordName + displayKeyWord;
+                        List<String> suggestions = record.getSuggestions();
+                        for (int i = 0; i < suggestions.size(); i++) {
+                            String checkSuggestion = suggestions.get(i);
+                            if (checkSuggestion.equals(checkKeyWord) && accurateType.equals(ACCURATE_TYPE.PERFECT)) {
+                                suggestions.set(i, "detect_" + checkSuggestion); // Update the list
+                                break;
+                            } else if (checkSuggestion.contains(displayKeyWord) && accurateType.equals(ACCURATE_TYPE.HALF)) {
+                                suggestions.set(i, "detect_" + checkSuggestion); // Update the list
+                                break;
+                            }
+                        }
+                    }
+                }
+
+
+
+
 
                 // Create a new DTO and add it to the response list
-                KeyWordAndRecordResponseDTO dto = new KeyWordAndRecordResponseDTO(keyWordName, List.of("test","test"), foundation, recordsForFoundation);
+                KeyWordAndRecordResponseDTO dto = new KeyWordAndRecordResponseDTO(keyWordName, displayKeyWords, accurateType, foundation, recordsForFoundation);
                 response.add(dto);
             }
         }

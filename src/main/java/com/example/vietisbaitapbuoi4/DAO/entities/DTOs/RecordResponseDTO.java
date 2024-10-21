@@ -1,5 +1,7 @@
 package com.example.vietisbaitapbuoi4.DAO.entities.DTOs;
 
+import com.example.vietisbaitapbuoi4.DAO.entities.SearchRecord;
+
 import java.util.Date;
 import java.util.List;
 
@@ -11,6 +13,12 @@ public class RecordResponseDTO {
 
     // Constructors
     public RecordResponseDTO() {}
+
+    public RecordResponseDTO(SearchRecord searchRecord) {
+        this.id = searchRecord.getId();
+        this.searchDate = searchRecord.getSearchDate();
+        this.suggestions = searchRecord.getSuggestions();
+    }
 
     public RecordResponseDTO(Long id, Date searchDate, List<String> suggestions) {
         this.id = id;
