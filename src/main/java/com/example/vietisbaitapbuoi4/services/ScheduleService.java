@@ -11,8 +11,10 @@ public class ScheduleService {
 
         @Autowired
         private SearchService searchService;
-        @Scheduled(fixedDelay = 7000L)  // Runs daily at midnight
+
+        // Runs daily at midnight using cron expression
+        @Scheduled(cron = "0 0 0 * * ?")
         public void scheduleDailySearch() {
-            searchService.performDailySearch();
+                searchService.performDailySearch();  // Gọi phương thức thực hiện tìm kiếm hàng ngày
         }
 }

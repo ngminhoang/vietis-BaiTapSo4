@@ -3,14 +3,19 @@ package com.example.vietisbaitapbuoi4.DAO.entities.DTOs;
 import com.example.vietisbaitapbuoi4.DAO.entities.SearchRecord;
 import com.example.vietisbaitapbuoi4.DAO.entities.enums.ACCURATE_TYPE;
 import com.example.vietisbaitapbuoi4.DAO.entities.enums.FOUDATION;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
+@Setter
+@Getter
 public class KeyWordAndRecordResponseDTO {
     public String keyWord;
     public ACCURATE_TYPE accurateType;
     public List<String> displayKeyWords;
     public FOUDATION foudation;
+
     public List<SearchRecord> records;
 
     public KeyWordAndRecordResponseDTO() {}

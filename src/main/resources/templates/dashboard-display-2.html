@@ -1,9 +1,7 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Table with Month and Year Selection</title>
+    <title>Dashboard Display 1</title>
     <style>
 
         /* Modal Overlay */
@@ -80,8 +78,12 @@
 
         /* Animation for Modal */
         @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
         }
 
         /* The Modal (background) */
@@ -192,7 +194,6 @@
 
         /* Table Styles */
         table {
-            width: 100%;
             border-collapse: collapse;
             background-color: #fff;
             border: 1px solid #ccc; /* Clearer border */
@@ -207,7 +208,6 @@
             text-align: center;
             border: 1px solid #ddd;
             color: #555;
-            width: 50px; /* Set each column to take 1/8 of the screen (100%/8 = 12.5%) */
         }
 
         th {
@@ -232,11 +232,8 @@
         }
 
     </style>
-
-
 </head>
 <body>
-
 
 <div id="keyModal" class="input-modal">
     <div class="input-modal-content">
@@ -248,8 +245,8 @@
 
             <label for="accurateType">Accurate Type:</label>
             <select id="accurateType" name="accurateType" required>
-                <option value="0">Half</option>
-                <option value="1">Full</option>
+                <option value="0">Partial</option>
+                <option value="1">Unamious</option>
             </select><br><br>
 
             <label for="displayKeys">Display Keywords (comma separated):</label>
@@ -259,7 +256,6 @@
         </form>
     </div>
 </div>
-
 
 <div id="imageModal" class="modal">
     <span class="close">&times;</span>
@@ -294,54 +290,36 @@
     <button id="openModalBtn">Add New</button>
 </div>
 
-<div class="first-display"></div>
+<table id="data-table">
+    <thead>
+    <tr>
+        <th>Keyword</th>
+        <th>Accurate Type</th>
+        <th>Foundation</th>
+        <th>Records</th>
+        <th th:each="index : ${#numbers.sequence(1, 31)}" th:text="${index}">Date</th>
+    </tr>
+    </thead>
+    <tbody id="table-body">
+    <tr th:each="item : ${data}">
+        <td th:text="${item.keyWord}">Keyword</td>
+        <td th:text="${item.accurateType}">Accurate Type</td>
+        <td th:text="${item.foudation}">Foundation</td>
+        <td th:each="index : ${#numbers.sequence(1, 31)}">
+            <div th:each="record : ${item.records}">
+                <div th:if="${#dates.format(record.searchDate, 'dd').toString() == index.toString()}">
+                    <div>
+                        <!-- Check if any suggestion starts with 'detect_' -->
+                        <p th:if="${searchService.anyStartsWithDetect(record.suggestions)}">V</p>
+                        <p th:if="${!searchService.anyStartsWithDetect(record.suggestions)}">X</p>
+                    </div>
+                </div>
+            </div>
+        </td>
 
-<div class="second-display">
 
-    <table id="data-table">
-        <thead>
-        <tr>
-            <th>SEARCH KEYWORDS</th>
-            <th>DISPLAY KEYWORDS</th>
-            <th>PLATFORM</th>
-            <th>MATCH PATTERN</th>
-            <th>1</th>
-            <th>2</th>
-            <th>3</th>
-            <th>4</th>
-            <th>5</th>
-            <th>6</th>
-            <th>7</th>
-            <th>8</th>
-            <th>9</th>
-            <th>10</th>
-            <th>11</th>
-            <th>12</th>
-            <th>13</th>
-            <th>14</th>
-            <th>15</th>
-            <th>16</th>
-            <th>17</th>
-            <th>18</th>
-            <th>19</th>
-            <th>20</th>
-            <th>21</th>
-            <th>22</th>
-            <th>23</th>
-            <th>24</th>
-            <th>25</th>
-            <th>26</th>
-            <th>27</th>
-            <th>28</th>
-            <th>29</th>
-            <th>30</th>
-            <th>31</th>
-        </tr>
-        </thead>
-        <tbody id="table-body">
-        <!-- Data rows will be populated here -->
-        </tbody>
-    </table>
+    </tr>
+    </tbody>
 
     <script>
         const monthSelect = document.getElementById('monthSelect');
@@ -350,16 +328,24 @@
         const nextMonthBtn = document.getElementById('nextMonth');
         const tableBody = document.getElementById('table-body');
         const switchButton = document.getElementById('switch');
-        switchButton .addEventListener('click', function () {
-            window.location.href = '/dashboard-display-1';
+
+        switchButton.addEventListener('click', function () {
+            const selectedMonth = parseInt(monthSelect.value) + 1;
+            const selectedYear = yearSelect.value;
+            window.location.href = `/dashboard-display-1?month=${selectedMonth}&year=${selectedYear}`;
         });
 
         let currentMonth = new Date().getMonth();
         let currentYear = new Date().getFullYear();
 
+        // Lấy giá trị tham số từ URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const monthParam = urlParams.get('month');
+        const yearParam = urlParams.get('year');
+
         // Populate year select with a range of years
         function populateYears() {
-            for (let i = 2000; i <= 2030; i++) {  // Change this range as needed
+            for (let i = 2000; i <= 2030; i++) {  // Thay đổi phạm vi năm nếu cần
                 let option = document.createElement('option');
                 option.value = i;
                 option.text = i;
@@ -370,142 +356,43 @@
             }
         }
 
+        // Cập nhật giá trị của các thẻ select nếu có tham số trong URL
+        function initializeDateSelectors() {
+            if (monthParam !== null) {
+                currentMonth = parseInt(monthParam) - 1;
+            }
+            if (yearParam !== null) {
+                currentYear = parseInt(yearParam);
+            }
+            monthSelect.value = currentMonth;
+            yearSelect.value = currentYear;
+        }
+
         // Initialize year select
         populateYears();
 
-        // Function to call the API and fetch data based on month and year
-        async function fetchData(month, year) {
-            const apiUrl = `http://localhost:8080/api/get_crawled_data?month=${parseInt(month) + 1}&year=${year}`;
-
-            try {
-                const response = await fetch(apiUrl);
-                if (!response.ok) {
-                    throw new Error('Failed to fetch data from API');
-                }
-                const data = await response.json();
-                populateTable(data); // Populate table with the fetched data
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Error fetching data. Please try again later.');
-            }
+        // Cập nhật bảng khi chọn tháng và năm
+        function updateTable() {
+            const selectedMonth = parseInt(monthSelect.value) + 1;
+            const selectedYear = yearSelect.value;
+            window.location.href = `/dashboard-display-2?month=${selectedMonth}&year=${selectedYear}`;
         }
 
-        function populateTable(data) {
-            // Clear the current table rows
-            tableBody.innerHTML = '';
+        window.addEventListener('DOMContentLoaded', (event) => {
+            // Lấy tất cả các phần tử có thuộc tính 'url'
+            const elementsWithUrl = document.querySelectorAll('[url]');
 
-            // Loop through each keyword group
+            elementsWithUrl.forEach(element => {
+                const imgPath = element.getAttribute('url');  // Lấy giá trị của thuộc tính 'url'
 
-
-            data.forEach(item => {
-
-                const tableRow = document.createElement('tr');
-
-                // Add cells for "Từ khóa đầu vào", "Nền tảng", "Mẫu khớp"
-                tableRow.innerHTML = `
-            <td>${item.keyWord}</td>
-        `;
-
-                const displayKeyWords = document.createElement('td')
-
-                for (let index in item.displayKeyWords) {
-                    const displayKeyWord = document.createElement('p')
-                    displayKeyWord.textContent = item.displayKeyWords[index]
-                    displayKeyWords.appendChild(displayKeyWord)
-                }
-
-                const foudation = document.createElement('td')
-                foudation.textContent = item.foudation
-                const type = document.createElement('td')
-                type.textContent = item.accurateType;
-                tableRow.appendChild(displayKeyWords)
-                tableRow.appendChild(foudation)
-                tableRow.appendChild(type)
-                // Loop through each record for the current keyword
-
-                let dayColumn = 1; // Start with the 1st day of the month
-
-// Iterate through all the days of the month (assuming 31 days)
-                while (dayColumn <= 31) {
-                    let recordFound = false; // Flag to track if a record matches the day
-
-                    // Loop through each record and check if the searchDate matches the current day
-                    for (let record of item.records) {
-                        const recordDate = new Date(record.searchDate).getDate();
-
-                        if (dayColumn === recordDate) {
-                            recordFound = true; // Set flag to true if a match is found
-
-                            const dayData = record.suggestions;
-                            const cell = document.createElement('td');
-
-                            for (let suggestion of dayData) {
-                                const suggestionDiv = document.createElement("p");
-
-                                if (suggestion.startsWith("detect_")) {
-
-                                    cell.textContent = "V"
-                                    break;
-                                } else {
-                                    cell.textContent = "X"
-                                }
-
-                                cell.appendChild(suggestionDiv);
-                            }
-
-                            tableRow.appendChild(cell);
-
-                            // Break out of the loop once a record is found and processed for the current day
-                            break;
-                        }
-                    }
-
-                    // If no record was found for the current day, append a blank <td>
-                    if (!recordFound) {
-                        const blankCell = document.createElement('td');
-                        blankCell.textContent = "_"
-                        tableRow.appendChild(blankCell);
-                    }
-
-                    // Move to the next day
-                    dayColumn++;
-                }
-
-                // Append the row to the table body
-                tableBody.appendChild(tableRow);
+                // Thêm sự kiện click
+                element.addEventListener('click', () => {
+                    showImagePopup(imgPath);  // Gọi hàm với imgPath
+                });
             });
-        }
-
-        // Function to display the image in a modal popup
-        function showImagePopup(imgPath) {
-            const modal = document.getElementById('imageModal');
-            const modalImage = document.getElementById('modalImage');
-
-            modal.style.display = "block";  // Show the modal
-            modalImage.src = imgPath;  // Set the image source
-        }
-
-        // Close the modal when the user clicks on the close button
-        document.querySelector('.close').addEventListener('click', function () {
-            document.getElementById('imageModal').style.display = "none";
         });
 
-        // Close the modal if the user clicks anywhere outside of the image
-        window.onclick = function (event) {
-            const modal = document.getElementById('imageModal');
-            if (event.target === modal) {
-                modal.style.display = "none";
-            }
-        }
-
-        // Update table based on the selected month and year
-        function updateTable() {
-            const selectedMonth = monthSelect.value;
-            const selectedYear = yearSelect.value;
-            fetchData(selectedMonth, selectedYear); // Call the API with the selected month and year
-        }
-
-        // Handle previous month navigation
+        // Điều hướng tháng trước
         prevMonthBtn.addEventListener('click', function () {
             if (currentMonth === 0) {
                 currentMonth = 11;
@@ -518,7 +405,7 @@
             updateTable();
         });
 
-        // Handle next month navigation
+        // Điều hướng tháng tiếp theo
         nextMonthBtn.addEventListener('click', function () {
             if (currentMonth === 11) {
                 currentMonth = 0;
@@ -531,45 +418,58 @@
             updateTable();
         });
 
-        // Add event listeners for manual month and year selection
+        // Sự kiện thay đổi tháng và năm
         monthSelect.addEventListener('change', updateTable);
         yearSelect.addEventListener('change', updateTable);
 
-        // Initial load
-        monthSelect.value = currentMonth;
-        updateTable();
-
-
+        // Khởi tạo với tham số tháng và năm từ URL (nếu có)
+        initializeDateSelectors();
 
 
         // Get the modal
         var modal = document.getElementById("keyModal");
+        var imgModal = document.getElementById("imageModal");
 
         // Get the button that opens the modal
         var btn = document.getElementById("openModalBtn");
 
         // Get the <span> element that closes the modal
-        var span = document.getElementsByClassName("input-close")[0];
+        var inputSpan = document.getElementsByClassName("input-close")[0];
+
+        var span = document.getElementsByClassName("close")[0];
 
         // When the user clicks the button, open the modal
-        btn.onclick = function() {
+        btn.onclick = function () {
             modal.style.display = "block";
         }
 
         // When the user clicks on <span> (x), close the modal
-        span.onclick = function() {
+        span.onclick = function () {
             modal.style.display = "none";
         }
+        inputSpan.onclick = function () {
+            imgModal.style.display = "none";
+        }
 
+        document.querySelector('.input-close').addEventListener('click', function () {
+            document.getElementById('keyModal').style.display = "none";
+        });
+
+        document.querySelector('.close').addEventListener('click', function () {
+            document.getElementById('imageModal').style.display = "none";
+        });
         // When the user clicks anywhere outside of the modal, close it
-        window.onclick = function(event) {
+        window.onclick = function (event) {
             if (event.target == modal) {
                 modal.style.display = "none";
+            }
+            if (event.target == imgModal) {
+                imgModal.style.display = "none";
             }
         }
 
         // Handle form submission
-        document.getElementById("createKeyForm").addEventListener("submit", async function(e) {
+        document.getElementById("createKeyForm").addEventListener("submit", async function (e) {
             e.preventDefault();
 
             const keyName = document.getElementById("keyName").value;
@@ -602,9 +502,17 @@
                 alert('An error occurred');
             }
         });
+
+        function showImagePopup(imgPath) {
+            const modal = document.getElementById('imageModal');
+            const modalImage = document.getElementById('modalImage');
+
+            modal.style.display = "block";  // Show the modal
+            modalImage.src = imgPath;  // Set the image source
+        }
     </script>
 
+</table>
 
-</div>
 </body>
 </html>

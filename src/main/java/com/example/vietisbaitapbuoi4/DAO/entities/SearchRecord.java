@@ -1,8 +1,6 @@
 package com.example.vietisbaitapbuoi4.DAO.entities;
 
 import com.example.vietisbaitapbuoi4.DAO.entities.enums.FOUDATION;
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,28 +9,30 @@ import lombok.NoArgsConstructor;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * Thực thể SearchRecord lưu trữ dữ liệu tìm kiếm.
+ */
 @Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "record")
-public class SearchRecord {  // Renamed from Record to SearchRecord
+public class SearchRecord {  // Đổi tên từ Record thành SearchRecord
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Tự động tạo ID
     private Long id;
 
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.DATE) // Định dạng ngày tháng
     private Date searchDate;
 
-    @ElementCollection
+    @ElementCollection // Lưu danh sách các gợi ý
     private List<String> suggestions;
 
-    private String imgPath;
+    private String imgPath; // Đường dẫn hình ảnh
 
-    private FOUDATION foudation;
+    private FOUDATION foudation; // Thuộc tính foundation (cơ sở)
 
-    @ManyToOne
-    @JoinColumn(name = "keyword_id")
-
+    @ManyToOne // Quan hệ nhiều - một với KeyWord
+    @JoinColumn(name = "keyword_id") // Khóa ngoại liên kết với KeyWord
     private KeyWord keyWord;
 }
